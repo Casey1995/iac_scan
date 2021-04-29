@@ -1,0 +1,47 @@
+metadata:
+  name: "Check that all resources are tagged with the key - env"
+  guideline: "Tag governance - incase of a matched condition -> add a tag of env with one of the values: prod/dev/test/stage"
+  category: "General"
+  severity: "Critical"
+scope:
+  provider: "aws"
+definition:
+      cond_type: "attribute"
+      resource_type: "all"
+      attribute: tags.env
+      operator: "exists"
+
+
+
+metadata:
+  name: "Check that all load balancer resources are connected only to https listener"
+  guideline: "In-case of non-compliant resource - change the listener/listener_rule protocol value to HTTPS"
+  category: "networking"
+  severity: "high"
+scope:
+  provider: "aws"
+definition:
+      cond_type: "connection"
+      resource_type:
+      - "aws_elb"
+      - "aws_lb"
+      connected_resource_types:
+      - "aws_security_group"
+      - "aws_default_security_group"
+      operator: "exists"
+
+
+
+metadata:
+  name: "Ensure EC2s have no public ip_address association"
+  guideline: "If non-compliant resource - change the value of associate_public_ip_address to FALSE, else secure approval from ENT-SEC to supress this policy"
+  category: "networking"
+  severity: "high"
+scope:
+  provider: "aws"
+definition:
+      cond_type: "attribute"
+      resource_type: "aws_instance"
+      attribute: "associate_public_ip_address"
+      operator: "equals"
+      value: "true"
